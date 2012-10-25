@@ -1,5 +1,8 @@
-
+#Antlr3 grammar
 grammar calc1;
+# Constracts a tree for given arithmetic expression. 
+# Supports addition, substraction, multiplication, division and exponentiation
+# Supports integers anf float (in normal form and in exponential form)
 
 input : expr EOF;
 
@@ -17,7 +20,7 @@ INT : '0'..'9'+ ;
 
 POW 	: '^' ;
 
-WS : ( ' ' | '\t' | '\r' | '\n' ) {$channel=HIDDEN;};//Игнорируй такие токены. то есть распознавай, но ничего не делай
+WS : ( ' ' | '\t' | '\r' | '\n' ) {$channel=HIDDEN;};
 
 FLOAT :   ('0'..'9')+ '.' ('0'..'9')* EXPONENT?
     |   '.' ('0'..'9')+ EXPONENT?
