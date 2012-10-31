@@ -8,4 +8,4 @@ run:
 	java -cp /usr/share/java/antlr3-runtime.jar:/usr/share/java/antlr3.jar:. calc
 
 clean:
-	rm -f *.class calcLexer.java calcParser.java calc.tokens
+	rm -f *.class calcLexer.java calcParser.java calc.tokens *__*
