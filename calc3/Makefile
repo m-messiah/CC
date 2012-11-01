@@ -1,7 +1,7 @@
 .PHONY: build run clean
 
-build: calc3.g Makefile
-	antlr3 calc3.g
+build: calc.g Makefile
+	antlr3 calc.g
 	javac -cp /usr/share/java/antlr3-runtime.jar:/usr/share/java/antlr3.jar:. calcLexer.java calcParser.java calc.java
 
 run:
