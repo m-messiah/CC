@@ -8,17 +8,24 @@ import java.util.Hashtable;
 }
 
 @members {
-Hashtable variables = new Hashtable();
-double recent=0;
+Hashtable<String,Double> variables = new Hashtable<String,Double>();
 }
 
 calc	: lines EOF 
 	;
 
-lines	: line NL {System.out.println();} (lines)? 
+lines	: line NL (lines)? 
 	;
 
-line	: summ {System.out.println($summ.value);}
+line	: summ { variables.put("RECENT",$summ.value); System.out.println(variables.get("RECENT")); }
+	| VAR '=' summ {variables.put($VAR.text, $summ.value);}
+	| VAR {if (variables.containsKey($VAR.text)) 
+			System.out.println(variables.get($VAR.text));
+		else 
+		System.err.println("ERROR: Undefined variable '"+$VAR.text+"'");
+		}
+	| PRINT summ {System.out.println($summ.value);}
+	| NL
 	;
 
 summ returns [double value]: 
@@ -39,7 +46,7 @@ mult returns [double value]:
 
 power returns [double value]: 
 	f1=factor {$value=$f1.value;} 
-	(POW p2=power {$value=pow($value,$p2.value);} )? ;
+	(POW p2=power {$value=Math.pow($value,$p2.value);} )? ;
 
 factor returns [double value]:
 	PLUS f1=factor {$value=$f1.value;}
@@ -49,9 +56,19 @@ factor returns [double value]:
 
 atom returns [double value]:
 	num=(INT | FLOAT) {$value=Double.parseDouble($num.text); }
+	| VAR {if (variables.containsKey($VAR.text)) 
+			$value=variables.get($VAR.text); 
+		else 
+		System.err.println("ERROR: Undefined variable '"+$VAR.text+"'");}
 	| LPAR summ RPAR {$value=$summ.value;}
 	;
 
+
+PRINT	: 'p''r''i''n''t'
+	;
+VAR	: ('A'..'Z' | 'a'..'z') ('A'..'Z' | 'a'..'z' | '0'..'9' | '_' )*
+	;
+ 
 INT	: '0'..'9'+ ;
 
 FLOAT	: ('0'..'9')+ '.' ('0'..'9')* EXPONENT?
