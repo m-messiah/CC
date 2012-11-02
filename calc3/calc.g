@@ -21,8 +21,8 @@ lines	: {correct=true;} line NL (lines)?
 line	: VAR '=' summ {if (correct) variables.put($VAR.text, $summ.value);} 
 	| PRINT summ {if (correct) System.out.println($summ.value);}
 	| summ { if (correct) { 
-		variables.put("__RECENT__",$summ.value); 
-		System.out.println(variables.get("__RECENT__"));} }
+		variables.put("$_",$summ.value); 
+		System.out.println(variables.get("$_"));} }
 
 	| NL
 	;
