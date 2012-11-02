@@ -9,22 +9,21 @@ import java.util.Hashtable;
 
 @members {
 Hashtable<String,Double> variables = new Hashtable<String,Double>();
+boolean correct=true;
 }
 
 calc	: lines EOF 
 	;
 
-lines	: line NL (lines)? 
+lines	: {correct=true;} line NL (lines)? 
 	;
 
-line	: summ { variables.put("RECENT",$summ.value); System.out.println(variables.get("RECENT")); }
-	| VAR '=' summ {variables.put($VAR.text, $summ.value);}
-	| VAR {if (variables.containsKey($VAR.text)) 
-			System.out.println(variables.get($VAR.text));
-		else 
-		System.err.println("ERROR: Undefined variable '"+$VAR.text+"'");
-		}
-	| PRINT summ {System.out.println($summ.value);}
+line	: VAR '=' summ {if (correct) variables.put($VAR.text, $summ.value);} 
+	| PRINT summ {if (correct) System.out.println($summ.value);}
+	| summ { if (correct) { 
+		variables.put("__RECENT__",$summ.value); 
+		System.out.println(variables.get("__RECENT__"));} }
+
 	| NL
 	;
 
@@ -41,7 +40,10 @@ mult returns [double value]:
 		if ($p2.value!=0) 
 			$value/=$p2.value; 
 		else 
-			System.err.println("ERROR: Division by zero");} )*
+			{System.err.println("ERROR: Division by zero");
+			correct=false;
+			}
+		} )*
 	;
 
 power returns [double value]: 
@@ -59,14 +61,15 @@ atom returns [double value]:
 	| VAR {if (variables.containsKey($VAR.text)) 
 			$value=variables.get($VAR.text); 
 		else 
-		System.err.println("ERROR: Undefined variable '"+$VAR.text+"'");}
+		{System.err.println("ERROR: Undefined variable '"+$VAR.text+"'"); correct=false;} }
 	| LPAR summ RPAR {$value=$summ.value;}
 	;
 
 
 PRINT	: 'p''r''i''n''t'
 	;
-VAR	: ('A'..'Z' | 'a'..'z') ('A'..'Z' | 'a'..'z' | '0'..'9' | '_' )*
+
+VAR	: ('A'..'Z' | 'a'..'z' | '_' | '$' ) ('A'..'Z' | 'a'..'z' | '0'..'9' | '_' )*
 	;
  
 INT	: '0'..'9'+ ;
