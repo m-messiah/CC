@@ -1,7 +1,7 @@
 grammar calc;
 
 options {
-	output AST;
+	output=AST;
 }
 
 calc	: lines EOF!
@@ -10,13 +10,13 @@ calc	: lines EOF!
 lines	: line NL! (lines)? 
 	;
 
-line	: VAR '='^ summ 
-	| PRINT summ
-	| summ
-	| NL!
+line	: expr
 	;
 
-summ	: mult ((PLUS^ | MINUS^) mult)*
+expr	:
+	mult ((PLUS^ | MINUS^) mult)*
+	| VAR EQ^ expr 
+	| NL!
 	;
 
 mult	: power ((MULT | DIV)^ power)*
@@ -31,12 +31,9 @@ factor	: (PLUS | MINUS)^ factor
 atom	: INT 
 	| FLOAT
 	| VAR
-	| LPAR summ RPAR -> ^(expr)
+	| LPAR expr RPAR -> ^(expr)
 	;
 
-
-PRINT	: 'p''r''i''n''t'
-	;
 
 VAR	: ('A'..'Z' | 'a'..'z' | '_' | '$' ) ('A'..'Z' | 'a'..'z' | '0'..'9' | '_' )*
 	;
@@ -50,6 +47,10 @@ FLOAT	: ('0'..'9')+ '.' ('0'..'9')* EXPONENT?
 
 EXPONENT : ('e'|'E') ('+'|'-')? ('0'..'9')+
 	; 
+
+EQ	: '='
+	| ':''='
+	;
 
 PLUS	: '+'
 	;
