@@ -11,6 +11,7 @@ lines	: line NL! (lines)?
 	;
 
 line	: expr
+	| PRINT^ expr
 	;
 
 expr	:
@@ -35,6 +36,9 @@ atom	: INT
 	| LPAR expr RPAR -> ^(expr)
 	;
 
+
+PRINT	: 'p''r''i''n''t'
+	;
 
 VAR	: ('A'..'Z' | 'a'..'z' | '_' | '$' ) ('A'..'Z' | 'a'..'z' | '0'..'9' | '_' )*
 	;

@@ -18,12 +18,14 @@ options {
 }
 
 calc
-    : ({correct=true;} expr {
+    : ({correct=true;} e1=expr {
 			if (correct) {
-                		variables.put("\$_", $expr.value);
+                		variables.put("\$_", $e1.value);
 		                System.out.println(variables.get("\$_"));}
 			}
-	)+
+	
+    | ^(PRINT e2=expr) { System.out.println($e2.value); } 
+    )+
     ;
 
 expr returns [double value]
