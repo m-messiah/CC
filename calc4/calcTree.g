@@ -40,7 +40,7 @@ expr returns [double value]
     | ^(POW e1=expr e2=expr)	{$value = Math.pow($e1.value,$e2.value);}
     | FLOAT	{$value = Double.parseDouble($FLOAT.text);}
     | INT	{$value = Integer.parseInt($INT.text);}
-    | ^(EQ VAR e2=expr)	{if (correct) {$value=$e2.value; variables.put($VAR.text, $e2.value);} else $value=-1;}
+    | ^(EQ VAR e2=expr)	{if (correct) {$value=$e2.value; variables.put($VAR.text, $e2.value); correct=false;} else $value=-1;}
     | VAR {if (variables.containsKey($VAR.text))
                         $value=variables.get($VAR.text);
                 else

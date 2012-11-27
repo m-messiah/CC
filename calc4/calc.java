@@ -3,7 +3,7 @@ import org.antlr.runtime.tree.*;
 
 public class calc {
     public static void main(String[] args) throws Exception {
-        // create a CharStream that reads from standard input
+	// create a CharStream that reads from standard input
         ANTLRInputStream input = new ANTLRInputStream(System.in);
         // create a lexer that feeds off of input CharStream
         calcLexer lexer = new calcLexer(input);
@@ -16,7 +16,7 @@ public class calc {
 
         CommonTree t = (CommonTree)r.getTree();
 	
-        System.out.println(t.toStringTree());
+        //System.out.println(t.toStringTree());
 
         // Walk resulting tree; create treenode stream first
         CommonTreeNodeStream nodes = new CommonTreeNodeStream(t);
@@ -24,6 +24,7 @@ public class calc {
         nodes.setTokenStream(tokens);
         // Create a tree Walker attached to the nodes stream
         calcTree walker = new calcTree(nodes);
+        System.out.println("--------------------------------");
         // Invoke the start symbol, rule program
         walker.calc();
         //
