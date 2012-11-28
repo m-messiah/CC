@@ -12,7 +12,7 @@ Hashtable<String,Double> variables = new Hashtable<String,Double>();
 boolean correct=true;
 }
 
-calc	: lines EOF 
+calc	: {System.out.println("----------------\nResults:");} lines EOF 
 	;
 
 lines	: {correct=true;} line NL (lines)? 
@@ -21,8 +21,8 @@ lines	: {correct=true;} line NL (lines)?
 line	: VAR '=' summ {if (correct) variables.put($VAR.text, $summ.value);} 
 	| PRINT summ {if (correct) System.out.println($summ.value);}
 	| summ { if (correct) { 
-		variables.put("$_",$summ.value); 
-		System.out.println(variables.get("$_"));} }
+		variables.put("\$_",$summ.value); 
+		System.out.println(variables.get("\$_"));} }
 
 	| NL
 	;
