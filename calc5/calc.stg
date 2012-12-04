@@ -1,0 +1,38 @@
+group calc;
+
+lines(ls) ::= <<
+---------------
+<ls; separator=";\n">
+>>
+
+create(v1,s1) ::= "<v1> = <s1>"
+
+print(s) ::= "\"<s>\""
+
+calculate(s) ::= "\>\><s>"
+
+sum(m) ::= <<
+sum(<m; separator=",">)
+>>
+
+multip(p) ::= <<
+mult(<p; separator=",">)
+>>
+
+div(m1,m2) ::= "div(<m1>,<m2>)"
+
+invert(p) ::= "1/<p>"
+
+power(f1,p2) ::= "<if(p2)> pow(<f1>,<p2>) <else> <f1> <endif>"
+
+factor(f) ::= "<f>"
+
+atom(a) ::= "<a>"
+
+number(n) ::= "<n>"
+
+negat(f) ::= "(-<f>)"
+
+get(v) ::= "$<v>"
+
+
