@@ -13,7 +13,7 @@ line	: VAR '=' s1=sum -> create(v1={$VAR.text}, s1={$s1.st})
 	| NL
 	;
 
-sum	: m+=multip ( PLUS  m+=multip)* -> sum(m={$m})
+sum	: m1=multip ( PLUS  m2=sum | MINUS m3=sum)? -> sum(m1={$m1.st},m2={$m2.st},m3={$m3.st})
  	;
 
 multip	: p+=power ( MULT p+=power )* -> multip(p={$p})
