@@ -9,4 +9,7 @@ TODO:
 
 	????
 
-	VARS? How to?
+	VARS Hash in grammar
+	
+	read.
+	Надо ввод/вывод внутри языка.
