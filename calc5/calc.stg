@@ -1,37 +1,80 @@
 group calc;
 
 lines(ls) ::= <<
----------------
-<ls; separator=";\n">
+.class public calc5
+.super java/lang/Object
+
+; standard initializer (calls java.lang.Object's initializer)
+;
+.method public \<init\>()V
+    aload_0
+    invokenonvirtual java/lang/Object/\<init\>()V
+    return
+.end method
+
+; main()
+;
+.method public static main([Ljava/lang/String;)V
+.limit stack 50
+.limit locals 50
+; push System.out onto the stack
+getstatic java/lang/System/out Ljava/io/PrintStream;
+
+<ls; separator="\n">
+
+ ; done
+    return
+.end method
+
 >>
 
 create(v1,s1) ::= "<v1> = <s1>"
 
 print(s) ::= "\"<s>\""
 
-calculate(s) ::= "\>\><s>"
+calculate(s) ::= "<s>"
 
 sum(m) ::= <<
-sum(<m; separator=",">)
+<m:{a | <a>
+}> 
+<rest(m):{a | dadd
+}>
+invokevirtual java/io/PrintStream/println(D)V
+;Summiruem 
 >>
 
 multip(p) ::= <<
-mult(<p; separator=",">)
+<if(rest(p))>
+<p:{b | <b>
+}>
+<rest(p):{b | dmul
+}>
+<else>
+<first(p)>
+<endif>
 >>
 
 div(m1,m2) ::= "div(<m1>,<m2>)"
 
 invert(p) ::= "1/<p>"
 
-power(f1,p2) ::= "<if(p2)> pow(<f1>,<p2>) <else> <f1> <endif>"
+power(f1,p2) ::= <<
+<if(p2)> 
+<f1>
+<p2>
+invokestatic    java/lang/Math.pow(DD)D
+<else> 
+<f1> 
+<endif>
+>>
 
 factor(f) ::= "<f>"
 
-atom(a) ::= "<a>"
+atom(a) ::= "<if(a)>ldc2_w <a> <endif>"
 
-number(n) ::= "<n>"
+number(n) ::= "<n>.0"
 
-negat(f) ::= "(-<f>)"
+negat(f) ::= "<f>"
 
 get(v) ::= "$<v>"
 

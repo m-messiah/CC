@@ -13,7 +13,7 @@ line	: VAR '=' s1=sum -> create(v1={$VAR.text}, s1={$s1.st})
 	| NL
 	;
 
-sum	: m+=multip ( (PLUS | MINUS) m+=multip)* -> sum(m={$m})
+sum	: m+=multip ( PLUS  m+=multip)* -> sum(m={$m})
  	;
 
 multip	: p+=power ( MULT p+=power )* -> multip(p={$p})
@@ -24,7 +24,7 @@ power	: f1=factor (POW p2=power )? -> power(f1={$f1.st},p2={$p2.st})
 
 factor	: PLUS f1=factor -> {$f1.st}
 	| MINUS f2=factor -> negat(f={$f2.st}) 
-	| a=atom -> {$a.st}
+	| a=atom -> atom(a={$a.st})
 	;
 
 atom	: INT -> number(n={$INT.text})

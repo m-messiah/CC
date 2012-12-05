@@ -1,4 +1,10 @@
-Надо будет на выходе сделать ассемблерный код.
-Можно выбирать любой ассемблер.
-Например вот есть JavaASM - Jasmin (http://jasmin.sourceforge.net/)$
+JavaASM - Jasmin (http://jasmin.sourceforge.net/)
 
+Работает сложение, умножение, степень.
+
+TODO:
+	div/sub/print
+
+	????
+
+	VARS? How to?
