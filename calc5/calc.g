@@ -16,6 +16,7 @@ line	: expr
 
 expr	:
 	mult ((PLUS^ | MINUS^) mult)*
+	| READ
 	| VAR EQ^ expr
 	| NL!
 	;
@@ -39,6 +40,9 @@ atom	:
 
 
 PRINT	: 'p''r''i''n''t'
+	;
+
+READ	: 'r''e''a''d'
 	;
 
 VAR	: ('A'..'Z' | 'a'..'z' | '_' | '$' ) ('A'..'Z' | 'a'..'z' | '0'..'9' | '_' )*

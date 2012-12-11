@@ -12,7 +12,7 @@ options {
 
 @members {
 	Hashtable<String,Integer> variables = new Hashtable<String,Integer>();
-	int inc=-2;
+	int inc=3;
 	int index = 0;
 }
 
@@ -33,10 +33,12 @@ expr
 				variables.put($VAR.text,index);
 			}
 			else {
-				inc+=2;
 				variables.put($VAR.text,inc);
-			} } -> set(i1={index},i2={inc}, e={$e2.st},v={$VAR.text})
+				index=inc;
+				inc+=2;
+			} } -> set(i={index}, e={$e2.st},v={$VAR.text})
 	| ^(PRINT e=expr) -> print(e={$e.st})
+	| READ	-> read()
     | VAR {if (variables.containsKey($VAR.text))
                         index=variables.get($VAR.text); } -> get(i={index},v={$VAR.text})
     ;
