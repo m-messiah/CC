@@ -1,6 +1,6 @@
-group calc;
+group calcTree;
 
-lines(ls) ::= <<
+calc(e) ::= <<
 .class public calc5
 .super java/lang/Object
 
@@ -20,9 +20,7 @@ lines(ls) ::= <<
 ; push System.out onto the stack
 getstatic java/lang/System/out Ljava/io/PrintStream;
 
-<ls:{l | <l>
-invokevirtual java/io/PrintStream/println(D)V
-}>
+<e; separator="\n">
 
  ; done
     return
@@ -32,53 +30,49 @@ invokevirtual java/io/PrintStream/println(D)V
 
 create(v1,s1) ::= "<v1> = <s1>"
 
-print(s) ::= "\"<s>\""
+print(e) ::= <<
+<e>
+invokevirtual java/io/PrintStream/println(D)V
+>>
 
-calculate(s) ::= "<s>"
+expr(e) ::= "<e>"
 
-sum(m1,m2,m3) ::= <<
-<m1>
-<if(m2)>
-<m2>
+add(e1,e2) ::= <<
+<e1>
+<e2>
 dadd
-
-<elseif(m3)>
-<m3>
+>>
+sub(e1,e2) ::= <<
+<e1>
+<e2>
 dsub
-
-<endif>
 >>
 
-multip(p) ::= <<
-<if(rest(p))>
-<p:{b | <b>
-}>
-<rest(p):{b | dmul
-}>
-<else>
-<first(p)>
-<endif>
+
+mul(e1,e2) ::= <<
+<e1>
+<e2>
+dmul
 >>
 
-div(m1,m2) ::= "div(<m1>,<m2>)"
+div(e1,e2) ::= <<
+<e1>
+<e2>
+ddiv
+>>
 
-invert(p) ::= "1/<p>"
-
-power(f1,p2) ::= <<
-<if(p2)> 
-<f1>
-<p2>
+pow(e1,e2) ::= <<
+<e1>
+<e2>
 invokestatic    java/lang/Math.pow(DD)D
-<else> 
-<f1> 
-<endif>
 >>
 
 factor(f) ::= "<f>"
 
-atom(a) ::= "<if(a)>ldc2_w <a> <endif>"
+atom(a) ::= "<a>"
 
-number(n) ::= "<n>.0"
+number(n) ::= "ldc2_w <n>"
+inumber(n) ::= "ldc2_w <n>.0"
 
 negat(f) ::= "<f>"
 
