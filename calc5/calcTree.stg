@@ -39,13 +39,21 @@ expr(e) ::= "<e>"
 
 add(e1,e2) ::= <<
 <e1>
+<if(e2)>
 <e2>
 dadd
+<endif>
 >>
 sub(e1,e2) ::= <<
+<if(e2)>
 <e1>
 <e2>
 dsub
+<else>
+ldc2_w 0.0
+<e1>
+dsub
+<endif>
 >>
 
 
@@ -67,15 +75,12 @@ pow(e1,e2) ::= <<
 invokestatic    java/lang/Math.pow(DD)D
 >>
 
-factor(f) ::= "<f>"
+factor(e) ::= "<e>"
 
-atom(a) ::= "<a>"
+atom(e) ::= "<e>"
 
 number(n) ::= "ldc2_w <n>"
 inumber(n) ::= "ldc2_w <n>.0"
-
-negat(f) ::= "<f>"
-
 get(v) ::= "$<v>"
 
 

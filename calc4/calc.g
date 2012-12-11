@@ -33,7 +33,7 @@ factor	:
 atom	: INT 
 	| FLOAT
 	| VAR
-	| LPAR expr RPAR -> ^(expr)
+	| LPAR expr RPAR -> expr
 	;
 
 

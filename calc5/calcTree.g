@@ -26,7 +26,7 @@ expr
     | ^(MULT e1=expr e2=expr) -> mul(e1={$e1.st},e2={$e2.st})
     | ^(DIV e1=expr e2=expr) -> div(e1={$e1.st},e2={$e2.st})
     | ^(POW e1=expr e2=expr) -> pow(e1={$e1.st},e2={$e2.st})
-    | FLOAT	-> number(n={$FLOAT.text})
+	| FLOAT	-> number(n={$FLOAT.text})
     | INT -> inumber(n={$INT.text})
     | ^(EQ VAR e2=expr)	{variables.put($VAR.text, inc); inc+=2;} -> set(i={inc},e2={$e2.st})
 	| ^(PRINT e=expr) -> print(e={$e.st})

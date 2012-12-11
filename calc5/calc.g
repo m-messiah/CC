@@ -30,10 +30,11 @@ factor	:
 	| atom
 	;
 
-atom	: INT
+atom	:
+	  INT
 	| FLOAT
 	| VAR
-	| LPAR expr RPAR -> ^(expr)
+	| LPAR expr RPAR -> expr
 	;
 
 
