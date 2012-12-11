@@ -12,12 +12,12 @@ options {
 
 @members {
 	Hashtable<String,Integer> variables = new Hashtable<String,Integer>();
-	int inc=0;
-	double value = 0.0;
+	int inc=-2;
+	int index = 0;
 }
 
 calc
-    : (e+=expr)+ -> calc(e={$e})
+    : (e+=expr)+ -> calc(e={$e},i={inc})
     ;
 
 expr 
@@ -28,8 +28,15 @@ expr
     | ^(POW e1=expr e2=expr) -> pow(e1={$e1.st},e2={$e2.st})
 	| FLOAT	-> number(n={$FLOAT.text})
     | INT -> inumber(n={$INT.text})
-    | ^(EQ VAR e2=expr)	{variables.put($VAR.text, inc); inc+=2;} -> set(i={inc},e2={$e2.st})
+    | ^(EQ VAR e2=expr)	{ if (variables.containsKey($VAR.text)) {
+				index=variables.get($VAR.text);
+				variables.put($VAR.text,index);
+			}
+			else {
+				inc+=2;
+				variables.put($VAR.text,inc);
+			} } -> set(i1={index},i2={inc}, e={$e2.st},v={$VAR.text})
 	| ^(PRINT e=expr) -> print(e={$e.st})
     | VAR {if (variables.containsKey($VAR.text))
-                        value=variables.get($VAR.text); } -> get(v={value})
+                        index=variables.get($VAR.text); } -> get(i={index},v={$VAR.text})
     ;

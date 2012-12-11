@@ -1,6 +1,6 @@
 group calcTree;
 
-calc(e) ::= <<
+calc(e,i) ::= <<
 .class public calc5
 .super java/lang/Object
 
@@ -16,7 +16,7 @@ calc(e) ::= <<
 ;
 .method public static main([Ljava/lang/String;)V
 .limit stack 50
-.limit locals 50
+.limit locals <i>
 ; push System.out onto the stack
 getstatic java/lang/System/out Ljava/io/PrintStream;
 
@@ -81,6 +81,15 @@ atom(e) ::= "<e>"
 
 number(n) ::= "ldc2_w <n>"
 inumber(n) ::= "ldc2_w <n>.0"
-get(v) ::= "$<v>"
+get(i,v) ::= <<
+dload <i>  ; <v>
+>>
 
-
+set(i1,i2,e,v) ::= <<
+<e>
+<if(i1)>
+dstore <i1> ; <v>
+<elseif(i2)>
+dstore <i2> ; <v>
+<endif>
+>>
