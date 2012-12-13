@@ -1,7 +1,7 @@
-group calcTree;
+group compilerTree;
 
-calc(e,i,s) ::= <<
-.class public calc5
+program(e,i,s) ::= <<
+.class public program
 .super java/lang/Object
 
 ; standard initializer (calls java.lang.Object's initializer)

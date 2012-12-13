@@ -1,10 +1,10 @@
-grammar calc;
+grammar compiler;
 
 options {
 	output=AST;
 }
 
-calc	: lines EOF!
+program : lines EOF!
 	;
 
 lines	: line NL! (lines)?

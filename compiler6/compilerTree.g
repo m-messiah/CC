@@ -1,7 +1,7 @@
-tree grammar calcTree;
+tree grammar compilerTree;
 
 options {
-    tokenVocab=calc;
+    tokenVocab=compiler;
     ASTLabelType=CommonTree;
 	output=template;
 }
@@ -18,8 +18,8 @@ options {
 	int s=0;
 }
 
-calc
-    : (e+=expr)+ -> calc(e={$e},i={inc},s={s})
+program
+    : (e+=expr)+ -> program(e={$e},i={inc},s={s})
     ;
 
 expr 
