@@ -29,10 +29,16 @@ program(e,i,s) ::= <<
 	invokenonvirtual    java/io/BufferedReader.\<init\>(Ljava/io/Reader;)V
 	astore_2
 	
-	<e; separator="\n">
+	<e>
 	; done
     return
 .end method
+>>
+
+block(e) ::= <<
+;begin
+<e;separator="\n">
+;end
 >>
 
 print(e) ::= <<
@@ -100,4 +106,38 @@ read() ::= <<
 aload_2
 invokevirtual   java/io/BufferedReader.readLine()Ljava/lang/String;
 invokestatic    java/lang/Double.parseDouble(Ljava/lang/String;)D
+>>
+
+iff(cond,thn,els) ::= <<
+<cond>
+if_icmpge L1
+<els>
+goto L2
+L1: <thn>
+L2: 
+>>
+
+ge(b1,b2) ::= <<
+<b1>
+<b2>
+>>
+gt(b1,b2) ::= <<
+<b1>
+<b2>
+>>
+le(b1,b2) ::= <<
+<b1>
+<b2>
+>>
+lt(b1,b2) ::= <<
+<b1>
+<b2>
+>>
+eq(b1,b2) ::= <<
+<b1>
+<b2>
+>>
+ne(b1,b2) ::= <<
+<b1>
+<b2>
 >>

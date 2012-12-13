@@ -4,27 +4,42 @@ options {
 	output=AST;
 }
 
-program : lines EOF!
+program :
+	block NL? EOF!
 	;
 
-lines	: line NL! (lines)?
+block	:
+	BEGIN lines END^
 	;
 
-line	: expr
+lines	:
+	line NL! (lines)?
+	;
+
+line	:
+	expr
 	| PRINT^ expr
+	| VAR EQ^ expr
+	| IF^ LPAR! cond RPAR! (NL!)? block ((NL!)? ELSE! block)?
+	|
+	;
+
+cond	:
+	expr ((GE^ | GT^ | LE^ | LT^ | NE^ | EQ^) expr)?
 	;
 
 expr	:
 	mult ((PLUS^ | MINUS^) mult)*
 	| READ
-	| VAR EQ^ expr
-	| NL!
 	;
 
-mult	: power ((MULT | DIV)^ power)*
+mult	:
+	power ((MULT | DIV)^ power)*
 	;
 
-power	: factor (POW^ power)? ;
+power	:
+	factor (POW^ power)?
+	;
 
 factor	:
 	(PLUS | MINUS)^ factor
@@ -39,10 +54,17 @@ atom	:
 	;
 
 
-PRINT	: 'p''r''i''n''t'
+PRINT	:
+	'p''r''i''n''t'
 	;
 
 READ	: 'r''e''a''d'
+	;
+
+IF	: 'i''f'
+	;
+
+ELSE : 'e''l''s''e'
 	;
 
 VAR	: ('A'..'Z' | 'a'..'z' | '_' | '$' ) ('A'..'Z' | 'a'..'z' | '0'..'9' | '_' )*
@@ -53,10 +75,6 @@ INT	: '0'..'9'+ ;
 FLOAT	: ('0'..'9')+ '.' ('0'..'9')* (('e'|'E') ('+'|'-')? ('0'..'9')+)?
 	| '.' ('0'..'9')+ (('e'|'E') ('+'|'-')? ('0'..'9')+)?
 	| ('0'..'9')+ (('e'|'E') ('+'|'-')? ('0'..'9')+)
-	;
-
-EQ	: '='
-	| ':''='
 	;
 
 PLUS	: '+'
@@ -74,10 +92,34 @@ DIV	: '/'
 POW	: '^'
 	;
 
+LE	: '<''='
+	;
+
+LT	: '<'
+	;
+
+GE	: '>''='
+	;
+
+GT	: '>'
+	;
+
+EQ	: '='
+	;
+
+NE	: '!''='
+	;
+
 LPAR    : '('
 	;
 
 RPAR    : ')'
+	;
+
+BEGIN	: '{'
+	;
+
+END	: '}'
 	;
 
 NL	: '\r' | '\n'

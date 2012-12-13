@@ -19,6 +19,7 @@ public class compiler {
         // begin parsing at rule r
         compilerParser.program_return r = parser.program();
         CommonTree t = (CommonTree)r.getTree();
+		//System.out.println(t.toStringTree());
         // Walk resulting tree; create treenode stream first
         CommonTreeNodeStream nodes = new CommonTreeNodeStream(t);
         // AST nodes have payloads that point into token stream
