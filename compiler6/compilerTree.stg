@@ -92,7 +92,11 @@ factor(e) ::= "<e>"
 atom(e) ::= "<e>"
 
 number(n) ::= "ldc2_w <n>"
-inumber(n) ::= "ldc2_w <n>.0"
+inumber(n) ::= <<
+ldc_w <n>
+i2d
+>>
+
 get(i,v) ::= <<
 dload <i> ; <v>
 >>
@@ -109,8 +113,7 @@ invokestatic    java/lang/Double.parseDouble(Ljava/lang/String;)D
 >>
 
 iff(cond,thn,els) ::= <<
-<cond>
-if_icmpge L1
+<cond> L1
 <els>
 goto L2
 L1: <thn>
@@ -120,24 +123,30 @@ L2:
 ge(b1,b2) ::= <<
 <b1>
 <b2>
->>
+dcmpl
+ifge >>
 gt(b1,b2) ::= <<
 <b1>
 <b2>
->>
+dcmpl
+ifgt >>
 le(b1,b2) ::= <<
 <b1>
 <b2>
->>
+dcmpl
+ifle >>
 lt(b1,b2) ::= <<
 <b1>
 <b2>
->>
+dcmpl
+iflt >>
 eq(b1,b2) ::= <<
 <b1>
 <b2>
->>
+dcmpl
+ifeq >>
 ne(b1,b2) ::= <<
 <b1>
 <b2>
->>
+dcmpl
+ifne >>
