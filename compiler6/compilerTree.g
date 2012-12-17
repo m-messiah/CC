@@ -43,14 +43,19 @@ line	:
  ;
 
 
+multicond	:
+	^(OR b1=cond (b2=cond)?) -> or(b1={$b1.st},b2={$b2.st})
+	| ^(AND b1=cond b2=cond) -> and(b1={$b1.st},b2={$b2.st})
+	| ^(NOT b1=cond) -> not(b1={$b1.st})
+	;
+
 cond	:
-	b1=expr -> ge(b1={$b1.st})
-	| ^(GE b1=expr (b2=expr)?) -> ge(b1={$b1.st},b2={$b2.st})
-	| ^(GT b1=expr (b2=expr)?) -> gt(b1={$b1.st},b2={$b2.st})
-	| ^(LE b1=expr (b2=expr)?) -> le(b1={$b1.st},b2={$b2.st})
-	| ^(LT b1=expr (b2=expr)?) -> lt(b1={$b1.st},b2={$b2.st})
-	| ^(EQ b1=expr (b2=expr)?) -> eq(b1={$b1.st},b2={$b2.st})
-	| ^(NE b1=expr (b2=expr)?) -> ne(b1={$b1.st},b2={$b2.st})
+	^(GE b1=expr (b2=expr)?) -> ge(b1={$b1.st},b2={$b2.st})
+	| ^(GT b1=expr b2=expr) -> gt(b1={$b1.st},b2={$b2.st})
+	| ^(LE b1=expr b2=expr) -> le(b1={$b1.st},b2={$b2.st})
+	| ^(LT b1=expr b2=expr) -> lt(b1={$b1.st},b2={$b2.st})
+	| ^(EQ b1=expr b2=expr) -> eq(b1={$b1.st},b2={$b2.st})
+	| ^(NE b1=expr b2=expr) -> ne(b1={$b1.st},b2={$b2.st})
 	;
 
 expr	:

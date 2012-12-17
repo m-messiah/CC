@@ -20,8 +20,21 @@ line	:
 	expr
 	| PRINT^ expr
 	| VAR EQ^ expr
-	| IF^ LPAR! cond RPAR! (NL!)? block ((NL!)? ELSE! block)?
+	| IF^ LPAR! orcond RPAR! (NL!)? block ((NL!)? ELSE! block)?
 	|
+	;
+
+orcond	:
+	andcond (OR^ andcond)*
+	;
+
+andcond	:
+	onecond (AND^ onecond)*
+	;
+
+onecond :
+	NOT^ onecond
+	| cond
 	;
 
 cond	:
@@ -90,6 +103,15 @@ DIV	: '/'
 	;
 
 POW	: '^'
+	;
+
+OR	: '|''|'
+	;
+
+AND	: '&''&'
+	;
+
+NOT	: '!'
 	;
 
 LE	: '<''='
