@@ -27,7 +27,7 @@ block	:
 	;
 
 line	:
-	   ^(IF cond thn=block els=block) -> iff(cond={$cond.st},thn={$thn.st},els={$els.st})
+	   ^(IF cond thn=block (els=block)?) -> iff(cond={$cond.st},thn={$thn.st},els={$els.st})
 	 | ^(EQ VAR e2=expr) { if (variables.containsKey($VAR.text)) {
                     index=variables.get($VAR.text);
                     variables.put($VAR.text,index);
@@ -44,7 +44,8 @@ line	:
 
 
 cond	:
-	  ^(GE b1=expr (b2=expr)?) -> ge(b1={$b1.st},b2={$b2.st})
+	b1=expr -> ge(b1={$b1.st})
+	| ^(GE b1=expr (b2=expr)?) -> ge(b1={$b1.st},b2={$b2.st})
 	| ^(GT b1=expr (b2=expr)?) -> gt(b1={$b1.st},b2={$b2.st})
 	| ^(LE b1=expr (b2=expr)?) -> le(b1={$b1.st},b2={$b2.st})
 	| ^(LT b1=expr (b2=expr)?) -> lt(b1={$b1.st},b2={$b2.st})

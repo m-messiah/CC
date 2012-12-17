@@ -122,7 +122,12 @@ L2:
 
 ge(b1,b2) ::= <<
 <b1>
+<if(b2)>
 <b2>
+<else>
+ldc2_w 0.0
+<endif>
+
 dcmpl
 ifge >>
 gt(b1,b2) ::= <<
