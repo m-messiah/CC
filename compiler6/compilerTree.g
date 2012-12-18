@@ -15,7 +15,8 @@ options {
 	int inc=3;
 	int index = 0;
 	int stack = 0;
-	int s=0;
+	int s = 0;
+    int lab = 0;
 }
 
 program :
@@ -27,7 +28,7 @@ block	:
 	;
 
 line	:
-	   ^(IF cond thn=block (els=block)?) -> iff(cond={$cond.st},thn={$thn.st},els={$els.st})
+	   ^(IF orcond thn=block (els=block)? {lab+=1;}) -> iff(cond={$orcond.st},thn={$thn.st},els={$els.st},lab={lab})
 	 | ^(EQ VAR e2=expr) { if (variables.containsKey($VAR.text)) {
                     index=variables.get($VAR.text);
                     variables.put($VAR.text,index);
@@ -43,7 +44,7 @@ line	:
  ;
 
 
-multicond	:
+orcond	:
 	^(OR b1=cond (b2=cond)?) -> or(b1={$b1.st},b2={$b2.st})
 	| ^(AND b1=cond b2=cond) -> and(b1={$b1.st},b2={$b2.st})
 	| ^(NOT b1=cond) -> not(b1={$b1.st})
@@ -54,8 +55,8 @@ cond	:
 	| ^(GT b1=expr b2=expr) -> gt(b1={$b1.st},b2={$b2.st})
 	| ^(LE b1=expr b2=expr) -> le(b1={$b1.st},b2={$b2.st})
 	| ^(LT b1=expr b2=expr) -> lt(b1={$b1.st},b2={$b2.st})
-	| ^(EQ b1=expr b2=expr) -> eq(b1={$b1.st},b2={$b2.st})
-	| ^(NE b1=expr b2=expr) -> ne(b1={$b1.st},b2={$b2.st})
+	| ^(EQ b1=expr b2=expr {lab+=1;}) -> eq(b1={$b1.st},b2={$b2.st},lab={lab})
+	| ^(NE b1=expr b2=expr {lab+=1;}) -> ne(b1={$b1.st},b2={$b2.st},lab={lab})
 	;
 
 expr	:

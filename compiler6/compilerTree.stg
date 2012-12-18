@@ -112,46 +112,91 @@ invokevirtual   java/io/BufferedReader.readLine()Ljava/lang/String;
 invokestatic    java/lang/Double.parseDouble(Ljava/lang/String;)D
 >>
 
-iff(cond,thn,els) ::= <<
-<cond> L1
+iff(cond,thn,els,lab) ::= <<
+<cond> 
+ifgt L<lab>
 <els>
-goto L2
-L1: <thn>
-L2: 
+goto L<lab>_2
+L<lab>: <thn>
+L<lab>_2: 
+>>
+
+or(b1,b2) ::= <<
+<b1>
+<b2>
+ior
+
+>>
+
+and(b1,b2) ::= <<
+<b1>
+<b2>
+iand
+
+>>
+
+not(b1) ::= <<
+ldc_w 1
+<b1>
+isub
 >>
 
 ge(b1,b2) ::= <<
 <b1>
 <if(b2)>
 <b2>
+
 <else>
 ldc2_w 0.0
-<endif>
 
+<endif>
 dcmpl
-ifge >>
+i2d
+ldc2_w -1.0
+dcmpl
+
+>>
 gt(b1,b2) ::= <<
 <b1>
 <b2>
 dcmpl
-ifgt >>
+>>
+
 le(b1,b2) ::= <<
 <b1>
 <b2>
 dcmpl
-ifle >>
+ineg
+i2d
+ldc2_w -1.0
+dcmpl
+
+>>
+
 lt(b1,b2) ::= <<
 <b1>
 <b2>
 dcmpl
-iflt >>
-eq(b1,b2) ::= <<
+ineg
+>>
+
+
+eq(b1,b2,lab) ::= <<
+ldc_w 1
 <b1>
 <b2>
 dcmpl
-ifeq >>
+ifge L<lab>
+ineg
+L<lab>: isub
+
+>>
+
 ne(b1,b2) ::= <<
 <b1>
 <b2>
 dcmpl
-ifne >>
+ifge L<lab>
+ineg
+L<lab>:
+>>
