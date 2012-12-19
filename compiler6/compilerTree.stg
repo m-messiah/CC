@@ -156,10 +156,15 @@ ldc2_w -1.0
 dcmpl
 
 >>
-gt(b1,b2) ::= <<
+gt(b1,b2,lab) ::= <<
 <b1>
 <b2>
 dcmpl
+dup
+ifge L<lab>
+bipush 1
+iadd
+L<lab>:
 >>
 
 le(b1,b2) ::= <<
@@ -173,11 +178,16 @@ dcmpl
 
 >>
 
-lt(b1,b2) ::= <<
+lt(b1,b2,lab) ::= <<
 <b1>
 <b2>
 dcmpl
 ineg
+dup
+ifge L<lab>
+bipush 1
+iadd
+L<lab>:
 >>
 
 
@@ -186,6 +196,7 @@ ldc_w 1
 <b1>
 <b2>
 dcmpl
+dup
 ifge L<lab>
 ineg
 L<lab>: isub
@@ -196,6 +207,7 @@ ne(b1,b2) ::= <<
 <b1>
 <b2>
 dcmpl
+dup
 ifge L<lab>
 ineg
 L<lab>:

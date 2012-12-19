@@ -29,7 +29,7 @@ block	:
 
 line	:
 	   ^(IF orcond thn=block (els=block)? {lab+=1;}) -> iff(cond={$orcond.st},thn={$thn.st},els={$els.st},lab={lab})
-	 | ^(EQ VAR e2=expr) { if (variables.containsKey($VAR.text)) {
+	 | ^(ASSIGN VAR e2=orcond) { if (variables.containsKey($VAR.text)) {
                     index=variables.get($VAR.text);
                     variables.put($VAR.text,index);
                 }
@@ -39,32 +39,26 @@ line	:
                     inc+=2;
                 } stack-=2;
             } -> set(i={index}, e={$e2.st},v={$VAR.text})
-    | ^(PRINT e=expr {stack+=1; if (stack>=s) s=stack;}) -> print(e={$e.st})
-	| expr -> {$expr.st}   
- ;
+    | ^(PRINT e=orcond {stack+=1; if (stack>=s) s=stack;}) -> print(e={$e.st})
+	| orcond -> {$orcond.st}   
+    ;
 
 
 orcond	:
-	^(OR b1=cond (b2=cond)?) -> or(b1={$b1.st},b2={$b2.st})
-	| ^(AND b1=cond b2=cond) -> and(b1={$b1.st},b2={$b2.st})
-	| ^(NOT b1=cond) -> not(b1={$b1.st})
-	;
-
-cond	:
-	^(GE b1=expr (b2=expr)?) -> ge(b1={$b1.st},b2={$b2.st})
-	| ^(GT b1=expr b2=expr) -> gt(b1={$b1.st},b2={$b2.st})
-	| ^(LE b1=expr b2=expr) -> le(b1={$b1.st},b2={$b2.st})
-	| ^(LT b1=expr b2=expr) -> lt(b1={$b1.st},b2={$b2.st})
-	| ^(EQ b1=expr b2=expr {lab+=1;}) -> eq(b1={$b1.st},b2={$b2.st},lab={lab})
-	| ^(NE b1=expr b2=expr {lab+=1;}) -> ne(b1={$b1.st},b2={$b2.st},lab={lab})
-	;
-
-expr	:
-	 ^(PLUS  e1=expr (e2=expr {stack-=2;})?) -> add(e1={$e1.st},e2={$e2.st})
-    | ^(MINUS e1=expr (e2=expr {stack-=2;})?) -> sub(e1={$e1.st},e2={$e2.st})
-    | ^(MULT  e1=expr e2=expr {stack-=2;}) -> mul(e1={$e1.st},e2={$e2.st})
-    | ^(DIV   e1=expr e2=expr {stack-=2;}) -> div(e1={$e1.st},e2={$e2.st})
-    | ^(POW   e1=expr e2=expr {stack-=2;}) -> pow(e1={$e1.st},e2={$e2.st})
+	^(OR b1=orcond (b2=orcond)?) -> or(b1={$b1.st},b2={$b2.st})
+	| ^(AND b1=orcond b2=orcond) -> and(b1={$b1.st},b2={$b2.st})
+	| ^(NOT b1=orcond {stack+=1; if (stack>=s) s=stack;}) -> not(b1={$b1.st})
+    | ^(GE b1=orcond b2=orcond) -> ge(b1={$b1.st},b2={$b2.st})
+	| ^(GT b1=orcond b2=orcond {lab+=1; stack+=2; if (stack>=s) s=stack;}) -> gt(b1={$b1.st},b2={$b2.st},lab={lab})
+	| ^(LE b1=orcond b2=orcond) -> le(b1={$b1.st},b2={$b2.st})
+	| ^(LT b1=orcond b2=orcond {lab+=1;}) -> lt(b1={$b1.st},b2={$b2.st},lab={lab})
+	| ^(EQ b1=orcond b2=orcond {lab+=1;stack+=1; if (stack>=s) s=stack;}) -> eq(b1={$b1.st},b2={$b2.st},lab={lab})
+	| ^(NE b1=orcond b2=orcond {lab+=1;}) -> ne(b1={$b1.st},b2={$b2.st},lab={lab})
+	| ^(PLUS  e1=orcond (e2=orcond {stack-=2;})?) -> add(e1={$e1.st},e2={$e2.st})
+    | ^(MINUS e1=orcond (e2=orcond {stack-=2;})?) -> sub(e1={$e1.st},e2={$e2.st})
+    | ^(MULT  e1=orcond e2=orcond {stack-=2;}) -> mul(e1={$e1.st},e2={$e2.st})
+    | ^(DIV   e1=orcond e2=orcond {stack-=2;}) -> div(e1={$e1.st},e2={$e2.st})
+    | ^(POW   e1=orcond e2=orcond {stack-=2;}) -> pow(e1={$e1.st},e2={$e2.st})
 	| FLOAT {stack+=2; if(stack>=s) s=stack;} -> number(n={$FLOAT.text})
     | INT   {stack+=2; if(stack>=s) s=stack;} -> inumber(n={$INT.text})
 	| READ	{stack+=2;if (stack>=s) s=stack;} -> read()

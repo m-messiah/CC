@@ -19,7 +19,7 @@ lines	:
 line	:
 	expr
 	| PRINT^ expr
-	| VAR EQ^ expr
+	| VAR ASSIGN^ expr
 	| IF^ LPAR! orcond RPAR! (NL!)? block ((NL!)? ELSE! block)?
 	|
 	;
@@ -34,6 +34,7 @@ andcond	:
 
 onecond :
 	NOT^ onecond
+    | BLPAR orcond BRPAR -> orcond
 	| cond
 	;
 
@@ -68,16 +69,16 @@ atom	:
 
 
 PRINT	:
-	'p''r''i''n''t'
+	'print'
 	;
 
-READ	: 'r''e''a''d'
+READ	: 'read'
 	;
 
-IF	: 'i''f'
+IF	: 'if'
 	;
 
-ELSE : 'e''l''s''e'
+ELSE : 'else'
 	;
 
 VAR	: ('A'..'Z' | 'a'..'z' | '_' | '$' ) ('A'..'Z' | 'a'..'z' | '0'..'9' | '_' )*
@@ -105,32 +106,42 @@ DIV	: '/'
 POW	: '^'
 	;
 
-OR	: '|''|'
+OR	: '||'
 	;
 
-AND	: '&''&'
+AND	: '&&'
 	;
 
 NOT	: '!'
 	;
 
-LE	: '<''='
+LE	: '<='
 	;
 
 LT	: '<'
 	;
 
-GE	: '>''='
+GE	: '>='
 	;
 
 GT	: '>'
 	;
 
-EQ	: '='
+EQ	: '=='
 	;
 
-NE	: '!''='
+ASSIGN  : '='
+    ;
+
+NE	: '!='
 	;
+
+BLPAR    : '['
+	;
+
+BRPAR    : ']'
+	;
+
 
 LPAR    : '('
 	;
