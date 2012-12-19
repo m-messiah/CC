@@ -15,7 +15,7 @@ options {
 	int inc=3;
 	int index = 0;
 	int stack = 0;
-	int s = 0;
+	int s = 2;
     int lab = 0;
 }
 
@@ -28,8 +28,17 @@ block	:
 	;
 
 line	:
-	   ^(IF orcond thn=block (els=block)? {lab+=1;}) -> iff(cond={$orcond.st},thn={$thn.st},els={$els.st},lab={lab})
-	 | ^(ASSIGN VAR e2=orcond) { if (variables.containsKey($VAR.text)) {
+    ^(IF orcond thn=block (els=block)? {lab+=1;}) -> iff(cond={$orcond.st},thn={$thn.st},els={$els.st},lab={lab})
+	| ^(WHILE orcond b=block {lab+=1;}) -> while(cond={$orcond.st},b={$b.st},lab={lab})
+	| ^(DO b=block orcond {lab+=1;}) -> dowhile(cond={$orcond.st},b={$b.st},lab={lab})
+	| ^(FOR before=init orcond after=init b=block {lab+=1;}) -> for(before={$before.st},cond={$orcond.st},after={$after.st},b={$b.st},lab={lab})
+    | ^(PRINT e=orcond {stack+=1; if (stack>=s) s=stack;}) -> print(e={$e.st})
+	| orcond -> {$orcond.st}
+    | init -> {$init.st}
+    ;
+
+init    :
+    ^(ASSIGN VAR e2=orcond) { if (variables.containsKey($VAR.text)) {
                     index=variables.get($VAR.text);
                     variables.put($VAR.text,index);
                 }
@@ -37,12 +46,31 @@ line	:
                     variables.put($VAR.text,inc);
                     index=inc;
                     inc+=2;
-                } stack-=2;
+                } stack-=2; if (stack<0) stack=0;
             } -> set(i={index}, e={$e2.st},v={$VAR.text})
-    | ^(PRINT e=orcond {stack+=1; if (stack>=s) s=stack;}) -> print(e={$e.st})
-	| orcond -> {$orcond.st}   
-    ;
 
+    | ^(INCR VAR) {if (variables.containsKey($VAR.text)) {
+                    index=variables.get($VAR.text);
+                    variables.put($VAR.text,index);
+                }
+                else {
+                    variables.put($VAR.text,inc);
+                    index=inc;
+                    inc+=2;
+                } stack-=2; if (stack<2) stack=2;
+            } -> incr(i={index},v={$VAR.text})
+
+    | ^(DECR VAR) {if (variables.containsKey($VAR.text)) {
+                    index=variables.get($VAR.text);
+                    variables.put($VAR.text,index);
+                }
+                else {
+                    variables.put($VAR.text,inc);
+                    index=inc;
+                    inc+=2;
+                } stack-=2; if (stack<2) stack=2;
+            } -> decr(i={index},v={$VAR.text})
+    ;
 
 orcond	:
 	^(OR b1=orcond (b2=orcond)?) -> or(b1={$b1.st},b2={$b2.st})
@@ -59,10 +87,10 @@ orcond	:
     | ^(MULT  e1=orcond e2=orcond {stack-=2;}) -> mul(e1={$e1.st},e2={$e2.st})
     | ^(DIV   e1=orcond e2=orcond {stack-=2;}) -> div(e1={$e1.st},e2={$e2.st})
     | ^(POW   e1=orcond e2=orcond {stack-=2;}) -> pow(e1={$e1.st},e2={$e2.st})
-	| FLOAT {stack+=2; if(stack>=s) s=stack;} -> number(n={$FLOAT.text})
-    | INT   {stack+=2; if(stack>=s) s=stack;} -> inumber(n={$INT.text})
-	| READ	{stack+=2;if (stack>=s) s=stack;} -> read()
+	| {stack+=2; if(stack>=s) s=stack;} FLOAT -> number(n={$FLOAT.text})
+    | {stack+=2; if(stack>=s) s=stack;} INT -> inumber(n={$INT.text})
+	| {stack+=2;if (stack>=s) s=stack;} READ -> read()
     | VAR   {if (variables.containsKey($VAR.text)) 
-                        {index=variables.get($VAR.text); stack+=2;if (stack>=s) s=stack;}
+                        {index=variables.get($VAR.text); stack+=2; if (stack>=s) s=stack;}
 			} -> get(i={index},v={$VAR.text})
 	;

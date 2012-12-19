@@ -19,10 +19,20 @@ lines	:
 line	:
 	expr
 	| PRINT^ expr
-	| VAR ASSIGN^ expr
+	| init
 	| IF^ LPAR! orcond RPAR! (NL!)? block ((NL!)? ELSE! block)?
+	| WHILE^ LPAR! orcond RPAR! (NL)? block
+	| DO^ (NL)? block (NL)? WHILE! LPAR! orcond RPAR!
+	| FOR^ LPAR! (init)? SEP! (orcond)? SEP! (init)? RPAR! (NL!)? block
 	|
 	;
+
+init    :
+    VAR ASSIGN^ expr
+    | VAR INCR^
+    | VAR DECR^
+    ;
+
 
 orcond	:
 	andcond (OR^ andcond)*
@@ -81,6 +91,15 @@ IF	: 'if'
 ELSE : 'else'
 	;
 
+WHILE : 'while'
+    ;
+
+DO  : 'do'
+    ;
+
+FOR : 'for'
+    ;
+
 VAR	: ('A'..'Z' | 'a'..'z' | '_' | '$' ) ('A'..'Z' | 'a'..'z' | '0'..'9' | '_' )*
 	;
  
@@ -105,6 +124,12 @@ DIV	: '/'
 
 POW	: '^'
 	;
+
+DECR    : '--'
+    ;
+
+INCR    : '++'
+    ;
 
 OR	: '||'
 	;
@@ -154,6 +179,9 @@ BEGIN	: '{'
 
 END	: '}'
 	;
+
+SEP : ';'
+    ;
 
 NL	: '\r' | '\n'
 	;
