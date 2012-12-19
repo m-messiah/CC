@@ -24,7 +24,9 @@ line	:
 	| WHILE^ LPAR! orcond RPAR! (NL)? block
 	| DO^ (NL)? block (NL)? WHILE! LPAR! orcond RPAR!
 	| FOR^ LPAR! (init)? SEP! (orcond)? SEP! (init)? RPAR! (NL!)? block
-	|
+	| CONTINUE
+    | BREAK
+    |
 	;
 
 init    :
@@ -98,6 +100,12 @@ DO  : 'do'
     ;
 
 FOR : 'for'
+    ;
+
+CONTINUE    : 'continue'
+    ;
+
+BREAK   : 'break'
     ;
 
 VAR	: ('A'..'Z' | 'a'..'z' | '_' | '$' ) ('A'..'Z' | 'a'..'z' | '0'..'9' | '_' )*

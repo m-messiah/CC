@@ -131,44 +131,53 @@ invokestatic    java/lang/Double.parseDouble(Ljava/lang/String;)D
 >>
 
 dowhile(cond,b,lab) ::= <<
-L<lab>:
+B<lab>:
 <b>
 <cond>
-ifgt L<lab>
+ifgt B<lab>
+E<lab>:
 
 >>
 
 
 while(cond,b,lab) ::= <<
-L<lab>:
+B<lab>:
 <cond>
-ifle L<lab>_2
+ifle E<lab>
 <b>
-goto L<lab>
-L<lab>_2:
+goto B<lab>
+E<lab>:
 
 >>
 
 for(before,cond,after,b,lab) ::= <<
 <before>
-L<lab>:
+B<lab>:
 <cond>
-ifle L<lab>_2
+ifle E<lab>
 <b>
 <after>
-goto L<lab>
-L<lab>_2:
+goto B<lab>
+E<lab>:
 
 >>
 
+continue(lab) ::= <<
+goto B<lab>
+>>
+
+break(lab) ::= <<
+goto E<lab>
+>>
 
 iff(cond,thn,els,lab) ::= <<
 <cond> 
-ifgt L<lab>
+ifgt THEN<lab>
 <els>
-goto L<lab>_2
-L<lab>: <thn>
-L<lab>_2: 
+goto E<lab>
+THEN<lab>:
+<thn>
+E<lab>: 
 >>
 
 or(b1,b2) ::= <<
@@ -216,6 +225,7 @@ ifge L<lab>
 bipush 1
 iadd
 L<lab>:
+
 >>
 
 le(b1,b2) ::= <<
@@ -240,6 +250,7 @@ ifge L<lab>
 bipush 1
 iadd
 L<lab>:
+
 >>
 
 
@@ -251,7 +262,8 @@ dcmpl
 dup
 ifge L<lab>
 ineg
-L<lab>: isub
+L<lab>:
+isub
 
 >>
 

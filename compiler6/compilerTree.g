@@ -17,6 +17,8 @@ options {
 	int stack = 0;
 	int s = 2;
     int lab = 0;
+    int clab = 0;
+    int temp=0;
 }
 
 program :
@@ -29,12 +31,14 @@ block	:
 
 line	:
     ^(IF orcond thn=block (els=block)? {lab+=1;}) -> iff(cond={$orcond.st},thn={$thn.st},els={$els.st},lab={lab})
-	| ^(WHILE orcond b=block {lab+=1;}) -> while(cond={$orcond.st},b={$b.st},lab={lab})
-	| ^(DO b=block orcond {lab+=1;}) -> dowhile(cond={$orcond.st},b={$b.st},lab={lab})
-	| ^(FOR before=init orcond after=init b=block {lab+=1;}) -> for(before={$before.st},cond={$orcond.st},after={$after.st},b={$b.st},lab={lab})
+	| ^(WHILE orcond b=block {clab+=1;}) -> while(cond={$orcond.st},b={$b.st},lab={clab})
+	| ^(DO b=block orcond {clab+=1;}) -> dowhile(cond={$orcond.st},b={$b.st},lab={clab})
+	| ^(FOR before=init orcond after=init b=block {clab+=1;}) -> for(before={$before.st},cond={$orcond.st},after={$after.st},b={$b.st},lab={clab})
     | ^(PRINT e=orcond {stack+=1; if (stack>=s) s=stack;}) -> print(e={$e.st})
 	| orcond -> {$orcond.st}
     | init -> {$init.st}
+    | CONTINUE {temp=clab+1;} -> continue(lab={temp})
+    | BREAK {temp=clab+1;} -> break(lab={temp})
     ;
 
 init    :
