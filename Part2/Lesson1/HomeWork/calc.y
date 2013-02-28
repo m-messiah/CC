@@ -3,7 +3,6 @@
     #include <ctype.h>
     #include <math.h>
     #define YYSTYPE double
-
     int yylex(void);
     int yyparse(void);
     void yyerror(char const *);

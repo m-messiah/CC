@@ -1,6 +1,8 @@
 %{
 #include <iostream>
+#define YYSTYPE double
 #include "calc.tab.h"
+
 %}
 %option noyywrap
 
