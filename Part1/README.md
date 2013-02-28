@@ -1,3 +1,6 @@
-2012. Autumn
+2012 Autumn
+=============
 
-ANTLR3, Java, Jasmin.
+* ANTLR3
+* Java
+* JASMin.
