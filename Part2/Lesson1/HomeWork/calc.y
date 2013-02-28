@@ -1,51 +1,43 @@
 %{
     #include <stdio.h>
     #include <ctype.h>
+    #include <math.h>
     #define YYSTYPE double
 
-    /*extern "C"*/ int yylex(void);
-    /*extern "C"*/ int yyparse(void);
+    int yylex(void);
+    int yyparse(void);
     void yyerror(char const *);
 %}
 
 %token NUM
+%token PLUS MINUS MULT DIV POW
+%token NL LPAR RPAR EXIT
 
-%left '+' '-'
-%left '*' '/'
+%left PLUS MINUS
+%left MULT DIV
 %left NEG
+%right POW
 %%
 
 input   : /* empty */
         | input line
         ;
 
-line    : '\n'
-        | exp '\n' { printf("%g\n", $1); }
+line    : NL
+        | exp NL { printf("%g\n", $1); }
         ;
 
 exp     : NUM
-        | exp '+' exp { $$ = $1 + $3; }
-        | exp '-' exp { $$ = $1 - $3; }
-        | exp '*' exp { $$ = $1 * $3; }
-        | exp '/' exp { $$ = $1 / $3; }
-        | '-' exp %prec NEG { $$ = - $2;}
+        | exp PLUS exp { $$ = $1 + $3; }
+        | exp MINUS exp { $$ = $1 - $3; }
+        | exp MULT exp { $$ = $1 * $3; }
+        | exp DIV exp { $$ = $1 / $3; }
+        | MINUS exp %prec NEG { $$ = - $2;}
+        | LPAR exp RPAR { $$ = $2; }
+        | exp POW exp { $$ = pow($1,$3); }
+        | EXIT  {   printf("%s\n","Recieved EXIT signal"); return 0; }
         ;
-
 %%
-
-int yylex(void)
-{
-    int c;
-    while ((c = getchar()) == ' ' || c == '\t');
-    if (c == '.' || isdigit(c)) {
-        ungetc(c, stdin);
-        scanf("%lf", &yylval);
-        return NUM;
-    }
-    if (c == EOF)
-        return 0;
-    return c;
-}
 
 void yyerror(char const *s)
 {
