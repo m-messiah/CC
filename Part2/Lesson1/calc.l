@@ -1,9 +1,5 @@
 %{
 #include <iostream>
- extern "C"
-    {
-        int yylex(void);
-    }
 %}
 %option noyywrap
 
