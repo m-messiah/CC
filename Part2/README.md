@@ -1,3 +1,5 @@
-2013. Spring
-
-flex, bison, llvm
+2013 Spring
+=============
+* flex
+* bison
+* llvm
