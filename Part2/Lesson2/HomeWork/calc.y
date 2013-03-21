@@ -25,7 +25,7 @@
 %token <sval> ID
 %type  <dval> exp
 %token PLUS MINUS MULT DIV POW
-%token NL LPAR RPAR EQ READ PRINT EXIT
+%token NL LPAR RPAR LET READ PRINT EXIT
 
 %left PLUS MINUS
 %left MULT DIV
@@ -38,24 +38,26 @@ input   : /* empty */
         ;
 
 line    : NL
-        | exp NL { printf("%g\n", $1); }
-        | PRINT exp NL { printf("Result = %g\n", $2); }
-        | assign NL
+        | exp NL
         | EXIT {   printf("%s\n","Recieved EXIT signal"); return 0; }
         ;
 
-assign  : ID EQ exp { variables[*$1] = $3; delete $1; }
+assign  : LPAR ID exp RPAR {variables[*$2] = $3; delete $2;}
+        | assign LPAR ID exp RPAR {variables[*$3] = $4; delete $3;}
+        ;
 
 exp     : NUM
         | ID { $$ = variables[*$1]; delete $1; }
         | READ { printf("Please input a number: "); scanf("%lg",&$$); }
-        | exp PLUS exp { $$ = $1 + $3; }
-        | exp MINUS exp { $$ = $1 - $3; }
-        | exp MULT exp { $$ = $1 * $3; }
-        | exp DIV exp { $$ = $1 / $3; }
-        | MINUS exp %prec NEG { $$ = - $2;}
         | LPAR exp RPAR { $$ = $2; }
-        | exp POW exp { $$ = pow($1,$3); }
+        | LPAR LET LPAR assign RPAR exp RPAR { $$ = $6; }
+        | LPAR PLUS exp exp RPAR { $$ = $3 + $4; }
+        | LPAR MINUS exp %prec NEG RPAR { $$ = - $3;}
+        | LPAR MINUS exp exp RPAR { $$ = $3 - $4; }
+        | LPAR MULT exp exp RPAR { $$ = $3 * $4; }
+        | LPAR DIV exp exp RPAR { $$ = $3 / $4; }
+        | LPAR POW exp exp RPAR { $$ = pow($3,$4); }
+        | LPAR PRINT exp RPAR { printf("Result: %g\n", $3); }
         ;
 %%
 

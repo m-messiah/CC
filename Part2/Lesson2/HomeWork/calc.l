@@ -16,7 +16,7 @@ nchar   [a-zA-Z_0-9]
 "-"             { return MINUS; }
 "*"             { return MULT;  }
 "/"             { return DIV;   }
-"="             { return EQ;    }
+"let"           { return LET;   }
 "\n"            { return NL;    }
 "^"             { return POW;   }
 "print"         { return PRINT; }
