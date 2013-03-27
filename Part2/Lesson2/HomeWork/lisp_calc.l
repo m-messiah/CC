@@ -1,6 +1,6 @@
 %{
 #include <iostream>
-#include "calc_defines.h"
+#include "defines.h"
 %}
 
 %option noyywrap
@@ -21,7 +21,7 @@ nchar   [a-zA-Z_0-9]
 "^"             { return POW;   }
 "print"         { return PRINT; }
 "read"          { return READ;  }
-{char}{nchar}*  {   yylval.sval = new std::string(yytext);
+{char}{nchar}*  { yylval.sval = new std::string(yytext);
                     return ID;  }
 "("             { return LPAR;  }
 ")"             { return RPAR;  }

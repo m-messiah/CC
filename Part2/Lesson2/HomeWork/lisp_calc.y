@@ -14,7 +14,7 @@
     std::map<std::string, double> variables;
 }
 
-%defines "calc_defines.h"
+%defines "defines.h"
 
 %union {
     double dval;
@@ -23,7 +23,7 @@
 
 %token <dval> NUM
 %token <sval> ID
-%type  <dval> exp
+%type  <dval> exp adds mults
 %token PLUS MINUS MULT DIV POW
 %token NL LPAR RPAR LET READ PRINT EXIT
 
@@ -46,15 +46,23 @@ assign  : LPAR ID exp RPAR {variables[*$2] = $3; delete $2;}
         | assign LPAR ID exp RPAR {variables[*$3] = $4; delete $3;}
         ;
 
+adds    : exp exp { $$ = $1 + $2;}
+        | adds exp { $$ = $1 + $2;}
+        ;
+
+mults   : exp exp { $$ = $1 * $2;}
+        | mults exp { $$ = $1 * $2;}
+        ;
+
 exp     : NUM
         | ID { $$ = variables[*$1]; delete $1; }
         | READ { printf("Please input a number: "); scanf("%lg",&$$); }
         | LPAR exp RPAR { $$ = $2; }
         | LPAR LET LPAR assign RPAR exp RPAR { $$ = $6; }
-        | LPAR PLUS exp exp RPAR { $$ = $3 + $4; }
+        | LPAR PLUS adds RPAR { $$ = $3; }
         | LPAR MINUS exp %prec NEG RPAR { $$ = - $3;}
         | LPAR MINUS exp exp RPAR { $$ = $3 - $4; }
-        | LPAR MULT exp exp RPAR { $$ = $3 * $4; }
+        | LPAR MULT mults RPAR { $$ = $3; }
         | LPAR DIV exp exp RPAR { $$ = $3 / $4; }
         | LPAR POW exp exp RPAR { $$ = pow($3,$4); }
         | LPAR PRINT exp RPAR { printf("Result: %g\n", $3); }

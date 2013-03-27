@@ -1,7 +1,7 @@
 .PHONY: build docs run clean
 
 
-NAME=calc
+NAME=lisp_calc
 
 build: ${NAME}.y ${NAME}.l Makefile
 	bison -o ${NAME}_parser.c ${NAME}.y
