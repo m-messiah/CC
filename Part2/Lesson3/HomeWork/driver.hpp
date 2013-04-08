@@ -4,6 +4,7 @@
 #include <string>
 #include <map>
 #include "parser.hpp"
+#include "ast.hpp"
 
 #define YY_DECL                                 \
     yy::Parser::token_type                      \
@@ -18,6 +19,7 @@ public:
     virtual ~Driver();
 
     std::map<std::string, double> variables;
+    AST* ast;
     double result;
 
     void scan_begin();

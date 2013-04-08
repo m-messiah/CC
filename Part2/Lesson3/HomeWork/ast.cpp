@@ -1,23 +1,32 @@
 #include <iostream>
 #include "ast.hpp"
 
-ASTNode::ASTNode()
+AST::AST()
 {
     Type = Undefined;
     Value = 0;
+    Name = "";
     Left = NULL;
     Right = NULL;
 }
 
-ASTNode::~ASTNode()
+AST::~AST()
 {
     delete Left;
     delete Right;
 }
 
-std::ostream &operator<<(std::ostream &fo, ASTNode* &N) {
-    if (N->Type == NumberValue){
+std::ostream &operator<<(std::ostream &fo, AST* &N) {
+    if (N) {
+    if (N->Type == Tree) {
+        fo << N->Left << std::endl;
+        if (N->next) fo << N->next;
+    }
+    else if (N->Type == NumberValue){
         fo << N->Value;
+    }
+    else if (N->Type == Variable) {
+        fo << N->Name;
     }
     else {
         fo <<"(";
@@ -37,8 +46,15 @@ std::ostream &operator<<(std::ostream &fo, ASTNode* &N) {
             case UnaryMinus:
                 fo << "- " << N->Left;
                 break;
+            case OperatorAssign:
+                fo << "= " << N->Left << " " << N->Right;
+                break;
          }
         fo << ")";
+    }
+    }
+    else {
+        fo << "NULL";
     }
     return fo;
 }

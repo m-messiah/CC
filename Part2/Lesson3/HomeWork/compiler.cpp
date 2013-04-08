@@ -1,6 +1,5 @@
 #include <iostream>
 #include "driver.hpp"
-#include "ast.hpp"
 
 int main(int argc, const char* argv[])
 {
@@ -11,7 +10,7 @@ int main(int argc, const char* argv[])
         else if (*argv == std::string ("-s"))
             driver.trace_scanning = true;
         else if (!driver.parse(*argv))
-            std::cout << driver.result << std::endl;
+            std::cout << driver.ast << std::endl;
   
     return 0;
 }

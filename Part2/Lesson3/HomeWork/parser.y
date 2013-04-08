@@ -6,7 +6,7 @@
 %code requires {
 #include <string>
 class Driver;
-class ASTNode;
+class AST;
 }
 
 %parse-param { Driver& driver }
@@ -16,8 +16,7 @@ class ASTNode;
 %error-verbose
 
 %union {
-    double dval;
-    std::string* sval;
+    AST* ast;
 }
 
 %code {
@@ -36,29 +35,61 @@ class ASTNode;
 %token SEMICOLON
 %token DEF
 %token EXTERN
-%token <sval> IDENTIFIER "identifier"
-%token <dval> NUMBER "number"
-%type <dval> expr
-
+%token <ast> IDENTIFIER "identifier"
+%token <ast> NUMBER "number"
+%type <ast> expr exprs assign
 %%
 %start unit;
-unit    : assignments expr  { driver.result = $2; };
+unit    : exprs { driver.ast = $1; };
 
-assignments : assignments assignment {}
-            | /* Nothing.  */        {};
-
-assignment  : IDENTIFIER EQUALS expr
-            { driver.variables[*$1] = $3; delete $1; };
+exprs   : expr {AST* tree = new AST;
+                        tree->Left = $1;
+                        tree->Type = Tree;
+                        tree->next = driver.ast;
+                        driver.ast = tree;
+                    }
+        | assign { AST* tree = new AST;
+                        tree->Left = $1;
+                        tree->Type = Tree;
+                        tree->next = driver.ast;
+                        driver.ast = tree;
+                }
+        ;
 
 %left PLUS MINUS;
 %left TIMES SLASH;
-
-expr    : expr PLUS expr    { $$ = $1 + $3; }
-        | expr MINUS expr   { $$ = $1 - $3; }
-        | expr TIMES expr   { $$ = $1 * $3; }
-        | expr SLASH expr   { $$ = $1 / $3; }
-        | IDENTIFIER  { $$ = driver.variables[*$1]; delete $1; }
-        | NUMBER      { $$ = $1; };
+assign:  IDENTIFIER EQUALS expr
+            { AST* node = new AST;
+              node->Type = OperatorAssign;
+              node->Left=$1;
+              node->Right=$3;
+              $$ = node; }
+ 
+expr    : expr PLUS expr    { 
+                            AST* node = new AST;
+                            node->Type = OperatorPlus;
+                            node->Left=$1;
+                            node->Right=$3;
+                            $$ = node;
+                            }
+        | expr MINUS expr   { AST* node = new AST;
+                            node->Type = OperatorMinus;
+                            node->Left=$1;
+                            node->Right=$3;
+                            $$ = node; }
+        | expr TIMES expr   { AST* node = new AST;
+                            node->Type = OperatorMul;
+                            node->Left=$1;
+                            node->Right=$3;
+                            $$ = node; }
+        | expr SLASH expr   { AST* node = new AST;
+                            node->Type = OperatorDiv;
+                            node->Left=$1;
+                            node->Right=$3;
+                            $$ = node; }
+        | NUMBER            { $$ = $1; }
+        | IDENTIFIER        { $$ = $1; }
+        ;
 %%
 
 void yy::Parser::error(const yy::location& l, const std::string& m)

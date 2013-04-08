@@ -2,7 +2,7 @@
 #define AST_H
 
 #include <iostream>
-
+#include <string>
 enum ASTNodeType 
 {
     Undefined,
@@ -11,22 +11,27 @@ enum ASTNodeType
     OperatorMul,
     OperatorDiv,
     UnaryMinus,
-    NumberValue
+    OperatorAssign,
+    Variable,
+    NumberValue,
+    Tree
 };
 
-class ASTNode
+class AST
 {
 public:
     ASTNodeType Type;
     double      Value;
-    ASTNode*    Left;
-    ASTNode*    Right;
+    std::string       Name;
+    AST*    Left;
+    AST*    Right;
+    AST* next;
 
-    ASTNode();
+    AST();
 
-    ~ASTNode();
+    ~AST();
 
-    friend std::ostream &operator<<(std::ostream &fo, ASTNode* &N); 
+    friend std::ostream &operator<<(std::ostream &fo, AST* &N); 
 
 };
 #endif

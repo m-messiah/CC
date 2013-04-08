@@ -31,11 +31,15 @@ nl    [\r\n]
 "def"               return token::DEF;
 "extern"            return token::EXTERN;
 {char}{nchar}*      {
-                        yylval->sval = new std::string(yytext);
+                        yylval->ast = new AST;
+                        yylval->ast->Type = Variable;
+                        yylval->ast->Name = yytext;
                         return token::IDENTIFIER;
                     }
 {digit}*\.?{digit}+ {
-                        yylval->dval = std::atof(yytext);
+                        yylval->ast = new AST;
+                        yylval->ast->Type = NumberValue;
+                        yylval->ast->Value = std::atof(yytext);
                         return token::NUMBER;
                     }
 ({nl}|{ws})+        /* ignore */
