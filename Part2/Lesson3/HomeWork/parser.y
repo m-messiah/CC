@@ -40,20 +40,27 @@ class AST;
 %type <ast> expr exprs assign
 %%
 %start unit;
-unit    : exprs { driver.ast = $1; };
-
-exprs   : expr {AST* tree = new AST;
+unit    : exprs {   AST* tree = new AST;
                         tree->Left = $1;
+                        tree->Type = Tree;
+                        tree->next = driver.ast;
+                        driver.ast = tree;
+                    };
+
+exprs   : exprs expr {AST* tree = new AST;
+                        tree->Left = $2;
                         tree->Type = Tree;
                         tree->next = driver.ast;
                         driver.ast = tree;
                     }
-        | assign { AST* tree = new AST;
-                        tree->Left = $1;
+        | exprs assign { AST* tree = new AST;
+                        tree->Left = $2;
                         tree->Type = Tree;
                         tree->next = driver.ast;
                         driver.ast = tree;
                 }
+        | expr {}
+        | assign {} 
         ;
 
 %left PLUS MINUS;
