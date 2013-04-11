@@ -28,32 +28,30 @@ class AST;
 %token PLUS
 %token MINUS
 %token TIMES
+%token POW
 %token SLASH
 %token LPAREN
 %token RPAREN
 %token EQUALS
-%token SEMICOLON
-%token DEF
-%token EXTERN
 %token <ast> IDENTIFIER "identifier"
 %token <ast> NUMBER "number"
-%type <ast> expr exprs assign
+%type <ast> expr lines assign
 %%
 %start unit;
-unit    : exprs {   AST* tree = new AST;
+unit    : lines {   AST* tree = new AST;
                         tree->Left = $1;
                         tree->Type = Tree;
                         tree->next = driver.ast;
                         driver.ast = tree;
                     };
 
-exprs   : exprs expr {AST* tree = new AST;
+lines   : lines expr {AST* tree = new AST;
                         tree->Left = $2;
                         tree->Type = Tree;
                         tree->next = driver.ast;
                         driver.ast = tree;
                     }
-        | exprs assign { AST* tree = new AST;
+        | lines assign { AST* tree = new AST;
                         tree->Left = $2;
                         tree->Type = Tree;
                         tree->next = driver.ast;
@@ -65,6 +63,7 @@ exprs   : exprs expr {AST* tree = new AST;
 
 %left PLUS MINUS;
 %left TIMES SLASH;
+%right POW;
 assign:  IDENTIFIER EQUALS expr
             { AST* node = new AST;
               node->Type = OperatorAssign;
@@ -94,6 +93,12 @@ expr    : expr PLUS expr    {
                             node->Left=$1;
                             node->Right=$3;
                             $$ = node; }
+        | expr POW expr     { AST* node = new AST;
+                            node->Type = OperatorPow;
+                            node->Left=$1;
+                            node->Right=$3;
+                            $$ = node; }
+        | LPAREN expr RPAREN { $$ = $2;}
         | NUMBER            { $$ = $1; }
         | IDENTIFIER        { $$ = $1; }
         ;

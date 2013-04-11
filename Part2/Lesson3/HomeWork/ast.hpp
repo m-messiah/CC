@@ -10,6 +10,8 @@ enum ASTNodeType
     OperatorMinus,
     OperatorMul,
     OperatorDiv,
+    OperatorPow,
+    Parentheses,
     UnaryMinus,
     OperatorAssign,
     Variable,

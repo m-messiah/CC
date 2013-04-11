@@ -44,6 +44,9 @@ std::ostream &operator<<(std::ostream &fo, AST* &N) {
             case OperatorDiv:
                 fo << "/ " << N->Left << " " << N->Right;
                 break;
+            case OperatorPow:
+                fo << "^ " << N->Left << " " << N->Right;
+                break;
             case UnaryMinus:
                 fo << "- " << N->Left;
                 break;

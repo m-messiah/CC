@@ -24,12 +24,10 @@ nl    [\r\n]
 "-"                 return token::MINUS;    
 "*"                 return token::TIMES;    
 "/"                 return token::SLASH;    
+"^"                 return token::POW;    
 "("                 return token::LPAREN;   
 ")"                 return token::RPAREN;   
 "="                 return token::EQUALS;
-";"                 return token::SEMICOLON;
-"def"               return token::DEF;
-"extern"            return token::EXTERN;
 {char}{nchar}*      {
                         yylval->ast = new AST;
                         yylval->ast->Type = Variable;
