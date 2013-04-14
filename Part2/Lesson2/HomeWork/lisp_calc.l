@@ -4,13 +4,12 @@
 %}
 
 %option noyywrap
-
 NUM     [0-9]*((\.|(e|E)(\+|\-)?)[0-9]+)?
 char    [a-zA-Z_]
 nchar   [a-zA-Z_0-9]
 
 %%
-{NUM}           { sscanf(yytext,"%lg",&yylval.dval);
+{NUM}           { yylval.sval = new std::string(yytext);
                   return NUM;   }
 "+"             { return PLUS;  }
 "-"             { return MINUS; }
