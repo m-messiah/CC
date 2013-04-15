@@ -4,22 +4,22 @@ help:
 	@echo "tagets: byte-code interpret assembler code-generator native compile run help"
 
 compile:
-	clang hello.c -o hello
+	clang main.c -o main
 
 byte-code:
-	clang -O0 -emit-llvm hello.c -c -o hello.bc
+	clang -O0 -emit-llvm main.c -c -o main.bc
 
 assembler:
-	llvm-dis-mp-3.0 < hello.bc | less
+	llvm-dis-3.0 < main.bc | less
 
 code-generator:
-	llc-mp-3.0 -disable-cfi hello.bc -o hello.s
+	llc-3.0 -disable-cfi main.bc -o main.s
 
 native:
-	gcc hello.s -o hello.native
+	gcc main.s -o main.native
 
 run:
-	./hello
+	./main
 
 interpret:
-	lli-mp-3.0 hello.bc
+	lli-3.0 main.bc

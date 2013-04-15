@@ -1,4 +1,4 @@
 .PHONY: build
 
 build:
-	g++ -o inc `llvm-config-mp-3.2 --cppflags --ldflags --libs core` inc.cpp
+	g++ -o inc `llvm-config-3.0 --cppflags --ldflags --libs core` inc.cpp
