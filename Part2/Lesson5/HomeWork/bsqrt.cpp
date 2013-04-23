@@ -13,72 +13,67 @@ int main(int argc, const char* argv[])
     IRBuilder<> builder(getGlobalContext());
     Module* theModule = new Module("module.1", getGlobalContext());
 
-    std::vector<Type*> params(0, Type::getInt32Ty(getGlobalContext()));
+    std::vector<Type*> params(1, Type::getDoubleTy(getGlobalContext()));
     FunctionType* functionType =
-        FunctionType::get(Type::getInt32Ty(getGlobalContext()), params, false);
+        FunctionType::get(builder.getVoidTy(), params, false);
     Function* function = Function::Create(functionType,
                                           Function::ExternalLinkage, "main",
                                           theModule);
-    std::vector<Type*> param2(1, Type::getDoubleTy(getGlobalContext()));
-    FunctionType* functionType2 =
-        FunctionType::get(Type::getDoubleTy(getGlobalContext()), param2, false);
-    Function* function2 = Function::Create(functionType,
-                                          Function::ExternalLinkage, "bsqrt",
-                                          theModule);
-    Function::arg_iterator args = function2->arg_begin();
+    Function::arg_iterator args = function->arg_begin();
     Value* x = args++;
     x->setName("x");
-
+    Function* function2 = Function::Create(functionType,
+                                          Function::ExternalLinkage, "printfd",
+                                          theModule);
     BasicBlock* entry = BasicBlock::Create(getGlobalContext(), "enter_main",
                                            function);
-    BasicBlock* entry_bsqrt = BasicBlock::Create(getGlobalContext(), "enter_bsqrt",
-                                           function2);
     BasicBlock* ret = BasicBlock::Create(getGlobalContext(), "return_main",
                                          function);
-    BasicBlock* ret2 = BasicBlock::Create(getGlobalContext(), "return_bsqrt",
-                                         function2);
-    BasicBlock* cond_false = BasicBlock::Create(getGlobalContext(),
-                                                "if_false", function2);
-    BasicBlock* cond_true = BasicBlock::Create(getGlobalContext(), "cond_true",
-                                               function2);
-    BasicBlock* cond_false_2 = BasicBlock::Create(getGlobalContext(),
-                                                  "cond_false2", function2);
-    BasicBlock* display = BasicBlock::Create(getGlobalContext(), "print", function);
-
+    BasicBlock* cycle = BasicBlock::Create(getGlobalContext(),
+                                                "cycle", function);
+    BasicBlock* cycle1 = BasicBlock::Create(getGlobalContext(),
+                                                "cycle1", function);
+    BasicBlock* left = BasicBlock::Create(getGlobalContext(),
+                                                "left", function);
+    BasicBlock* right = BasicBlock::Create(getGlobalContext(),
+                                                "right",
+                                               function);
+    
     builder.SetInsertPoint(entry);
-    builder.CreateRet(0);
-    builder.SetInsertPoint(display);
-    std::vector<Value*> args1;
-    args1.push_back(x);
-    Value* bi_sqrt = builder.CreateCall(function, args1, "bin_bsqrt");
-    builder.CreateRet(bi_sqrt);
-    /*builder.SetInsertPoint(cond_false);
-    Value* xLessThanY = builder.CreateICmpULT(x, y, "tmp");
-    builder.CreateCondBr(xLessThanY, cond_true, cond_false_2);
+    Value* one = ConstantFP::get(getGlobalContext(), APFloat(1.0));
+    Value* two = ConstantFP::get(getGlobalContext(), APFloat(2.0));
+    Value* l = builder.CreateFMul(one, one, "left"); 
+    Value* r = builder.CreateFMul(x, one, "right");
+    Value* res;
+    builder.SetInsertPoint(cycle);
+    Value* lLessThanR = builder.CreateFCmpULE(l, r, "cont");
+    builder.CreateCondBr(lLessThanR, cycle1, ret);
 
-    builder.SetInsertPoint(cond_true);
-    Value* yMinusX = builder.CreateSub(y, x, "tmp");
-    std::vector<Value*> args1;
-    args1.push_back(x);
-    args1.push_back(yMinusX);
-    Value* recur_1 = builder.CreateCall(function, args1, "tmp");
-    builder.CreateRet(recur_1);
+    builder.SetInsertPoint(cycle1);
+    Value* m2 = builder.CreateFAdd(l, r, "m2");
+    Value* m = builder.CreateFDiv(m2, two, "m");
+    Value* mSquared = builder.CreateFMul(m, m, "mSquared");
+    Value* mSqLessThanX = builder.CreateFCmpULE(mSquared, x, "tmp");
+    builder.CreateCondBr(mSqLessThanX, left, right);
 
-    builder.SetInsertPoint(cond_false_2);
-    Value* xMinusY = builder.CreateSub(x, y, "tmp");
-    std::vector<Value*> args2;
-    args2.push_back(xMinusY);
-    args2.push_back(y);
-    Value* recur_2 = builder.CreateCall(function, args2, "tmp");
-    builder.CreateRet(recur_2);
-    */
-    verifyFunction(*function);
+    builder.SetInsertPoint(left);
+    res = builder.CreateFMul(m, one, "res");
+    l = builder.CreateFAdd(m, one, "left");
+    builder.CreateBr(cycle);
+
+    builder.SetInsertPoint(right);
+    r = builder.CreateFSub(m, one, "right");
+    builder.CreateBr(cycle);
     
+    builder.SetInsertPoint(ret);
+    builder.CreateCall(function2, res, "print");
     
+    //verifyFunction(*function);
+        
     theModule->dump();
 
     std::string errorString;
-    raw_fd_ostream bitcode("gcd.bc", errorString, 0);
+    raw_fd_ostream bitcode("bsqrt.bc", errorString, 0);
     WriteBitcodeToFile(theModule, bitcode);
     bitcode.close();
 
