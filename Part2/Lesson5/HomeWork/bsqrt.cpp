@@ -23,7 +23,7 @@ int main(int argc, const char* argv[])
     Value* x = args++;
     x->setName("x");
     Function* function2 = Function::Create(functionType,
-                                          Function::ExternalLinkage, "printfd",
+                                          Function::ExternalLinkage, "print",
                                           theModule);
     BasicBlock* entry = BasicBlock::Create(getGlobalContext(), "enter_main",
                                            function);
@@ -42,9 +42,10 @@ int main(int argc, const char* argv[])
     builder.SetInsertPoint(entry);
     Value* one = ConstantFP::get(getGlobalContext(), APFloat(1.0));
     Value* two = ConstantFP::get(getGlobalContext(), APFloat(2.0));
-    Value* l = builder.CreateFMul(one, one, "left"); 
-    Value* r = builder.CreateFMul(x, one, "right");
+    Value* l = builder.CreateFMul(one, one, "l"); 
+    Value* r = builder.CreateFMul(x, one, "r");
     Value* res;
+
     builder.SetInsertPoint(cycle);
     Value* lLessThanR = builder.CreateFCmpULE(l, r, "cont");
     builder.CreateCondBr(lLessThanR, cycle1, ret);
@@ -68,7 +69,7 @@ int main(int argc, const char* argv[])
     builder.SetInsertPoint(ret);
     builder.CreateCall(function2, res, "print");
     
-    //verifyFunction(*function);
+    verifyFunction(*function);
         
     theModule->dump();
 
