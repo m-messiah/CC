@@ -40,7 +40,9 @@ class Driver;
 %token RPAREN
 %token EQUALS
 %token SEMICOLON
-%token DEF
+%token DFUNC
+%token BEGIN
+%token FINISH
 %token EXTERN
 %token <sval> IDENTIFIER "identifier"
 %token <dval> NUMBER "number"
@@ -69,12 +71,18 @@ statements
 
 statement
     : assignment 
-    | print      
+    | print
+    | declaration      
     ;
 
 assignment
     : IDENTIFIER EQUALS expr 
       { $$ = new BinaryOpASTNode('=', new VariableASTNode(*$1), $3); }
+    ;
+
+declaration
+    : DFUNC IDENTIFIER BEGIN statements FINISH
+      { $$ = new FuncASTNode(new VariableASTNode(*$2), $4); }
     ;
 
 print 

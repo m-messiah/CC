@@ -25,6 +25,9 @@ nl    [\r\n]
 "*"                 return token::TIMES;    
 "/"                 return token::SLASH;    
 "="                 return token::EQUALS;
+"{"                 return token::BEGIN;
+"}"                 return token::FINISH;
+"dfunc"             return token::FUNC;
 {char}{nchar}*      {
                         yylval->sval = new std::string(yytext);
                         return token::IDENTIFIER;

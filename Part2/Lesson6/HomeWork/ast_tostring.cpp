@@ -10,6 +10,13 @@ std::string BlockASTNode::toString() const
   return oss.str();
 }
 
+std::string FuncASTNode::toString() const
+{
+  std::ostringstream oss;
+  oss << "(dfunc " << name_ << " " << body_ << ")";
+  return oss.str();
+}
+
 std::string NumberASTNode::toString() const
 {
   std::ostringstream oss;

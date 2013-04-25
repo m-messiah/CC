@@ -83,6 +83,22 @@ class BlockASTNode : public ASTNode, public BasicBlockNode
   virtual BasicBlock* codegen() const;
 };
 
+class FuncASTNode : public ASTNode, public VariableASTNode, public BlockASTNode
+{
+  VariableASTNode* name_;
+  BlockASTNode* body_;
+    
+ public:
+  FuncASTNode(VariableASTNode name, BlockASTNode body) {
+    name_=name;
+    body_=body;
+  }
+
+  virtual std::string toString() const;
+  virtual BasicBlock* codegen() const;
+};
+
+
 class NumberASTNode : public ASTNode, public ValueNode
 {
   const double val_;
