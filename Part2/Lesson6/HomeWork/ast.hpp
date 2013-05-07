@@ -86,12 +86,16 @@ class BlockASTNode : public ASTNode, public BasicBlockNode
 class FuncASTNode : public ASTNode, public VariableASTNode, public BlockASTNode
 {
   VariableASTNode* name_;
+  /*std::vector<std::string> params;*/
   BlockASTNode* body_;
     
  public:
   FuncASTNode(VariableASTNode name, BlockASTNode body) {
     name_=name;
     body_=body;
+  }
+  std::string getName() {
+    return name_.getName();
   }
 
   virtual std::string toString() const;
