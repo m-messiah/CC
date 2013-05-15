@@ -36,10 +36,11 @@
 %left NEG
 %right POW
 %%
+file    : input { printf("\treturn 0;\n}\n");}
+        ;
 
-input   : /* empty */
+input   : /* empty */ { printf("#include <stdio.h>\n\nint main() {\n");}
         | input line 
-
         ;
 
 line    : NL 
