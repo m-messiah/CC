@@ -27,8 +27,6 @@ int main(int argc, const char* argv[])
                                           theModule);
     BasicBlock* entry = BasicBlock::Create(getGlobalContext(), "enter_main",
                                            function);
-    BasicBlock* ret = BasicBlock::Create(getGlobalContext(), "return_main",
-                                         function);
     BasicBlock* cycle = BasicBlock::Create(getGlobalContext(),
                                                 "cycle", function);
     BasicBlock* cycle1 = BasicBlock::Create(getGlobalContext(),
@@ -38,6 +36,8 @@ int main(int argc, const char* argv[])
     BasicBlock* right = BasicBlock::Create(getGlobalContext(),
                                                 "right",
                                                function);
+    BasicBlock* ret = BasicBlock::Create(getGlobalContext(), "return_main",
+                                         function);
     
     builder.SetInsertPoint(entry);
     Value* one = ConstantFP::get(getGlobalContext(), APFloat(1.0));
@@ -45,6 +45,7 @@ int main(int argc, const char* argv[])
     Value* l = builder.CreateFMul(one, one, "l"); 
     Value* r = builder.CreateFMul(x, one, "r");
     Value* res;
+    builder.CreateBr(ret);
 
     builder.SetInsertPoint(cycle);
     Value* lLessThanR = builder.CreateFCmpULE(l, r, "cont");
@@ -67,7 +68,9 @@ int main(int argc, const char* argv[])
     builder.CreateBr(cycle);
     
     builder.SetInsertPoint(ret);
-    builder.CreateCall(function2, res, "print");
+    builder.CreateCall(function2, res);
+    builder.CreateRetVoid();
+    
     
     verifyFunction(*function);
         
