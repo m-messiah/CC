@@ -59,6 +59,13 @@ Value* PrintCallASTNode::codegen() const
   return builder.CreateCall(printFunction, args);
 }
 
+Value* FuncASTNode::codegen() const
+{
+  /*std::vector<Type*> params(FuncASTNode::params.length(), Type:;getDoubleTy(getGlobalContext())); */
+  FunctionType* functionType = FunctionType::get(Type::getDoubleTy(getGlobalContext()), 0, false);
+  function = Function::Create(functionType, Function::ExternalLinkage, FuncASTNode::getName(), theModule);
+}
+
 Module* UnitASTNode::codegen() const
 {
   Module* theModule = new Module("myModule", getGlobalContext());
