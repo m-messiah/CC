@@ -14,15 +14,18 @@ int main(int argc, const char* argv[])
     Module* theModule = new Module("module.1", getGlobalContext());
 
     std::vector<Type*> params(1, Type::getDoubleTy(getGlobalContext()));
+    std::vector<Type*> params2(2, Type::getDoubleTy(getGlobalContext()));
     FunctionType* functionType =
         FunctionType::get(builder.getVoidTy(), params, false);
-    Function* function = Function::Create(functionType,
+    FunctionType* functionType2 =
+        FunctionType::get(builder.getVoidTy(), params2, false);
+    Function* function = Function::Create(functionType2,
                                           Function::ExternalLinkage, "main",
                                           theModule);
     Function::arg_iterator args = function->arg_begin();
     Value* x = args++;
     x->setName("x");
-    Function* function2 = Function::Create(functionType,
+    Function* print = Function::Create(functionType,
                                           Function::ExternalLinkage, "print",
                                           theModule);
     BasicBlock* entry = BasicBlock::Create(getGlobalContext(), "enter_main",
@@ -31,6 +34,8 @@ int main(int argc, const char* argv[])
                                                 "cycle", function);
     BasicBlock* cycle1 = BasicBlock::Create(getGlobalContext(),
                                                 "cycle1", function);
+    BasicBlock* cycle2 = BasicBlock::Create(getGlobalContext(),
+                                                "cycle2", function);
     BasicBlock* left = BasicBlock::Create(getGlobalContext(),
                                                 "left", function);
     BasicBlock* right = BasicBlock::Create(getGlobalContext(),
@@ -40,18 +45,26 @@ int main(int argc, const char* argv[])
                                          function);
     
     builder.SetInsertPoint(entry);
+    builder.CreateCall(print, x);
+    Value* zero = ConstantFP::get(getGlobalContext(), APFloat(0.0));
     Value* one = ConstantFP::get(getGlobalContext(), APFloat(1.0));
     Value* two = ConstantFP::get(getGlobalContext(), APFloat(2.0));
-    Value* l = builder.CreateFMul(one, one, "l"); 
-    Value* r = builder.CreateFMul(x, one, "r");
+
+    Value* l = builder.CreateFSub(x, x, "l"); 
+    Value* r = builder.CreateFAdd(x, zero, "r");
     Value* res;
-    builder.CreateBr(ret);
+    builder.CreateBr(cycle);
 
     builder.SetInsertPoint(cycle);
     Value* lLessThanR = builder.CreateFCmpULE(l, r, "cont");
     builder.CreateCondBr(lLessThanR, cycle1, ret);
 
     builder.SetInsertPoint(cycle1);
+    Value* lR = builder.CreateFSub(r, l, "lR");
+    Value* lRBig = builder.CreateFCmpULE(zero, lR, "cont1");
+    builder.CreateCondBr(lRBig, cycle2, ret);
+
+    builder.SetInsertPoint(cycle2);
     Value* m2 = builder.CreateFAdd(l, r, "m2");
     Value* m = builder.CreateFDiv(m2, two, "m");
     Value* mSquared = builder.CreateFMul(m, m, "mSquared");
@@ -60,15 +73,18 @@ int main(int argc, const char* argv[])
 
     builder.SetInsertPoint(left);
     res = builder.CreateFMul(m, one, "res");
+    builder.CreateCall(print, res);
     l = builder.CreateFAdd(m, one, "left");
     builder.CreateBr(cycle);
 
     builder.SetInsertPoint(right);
+    res = builder.CreateFMul(m, one, "res");
+    builder.CreateCall(print, res);
     r = builder.CreateFSub(m, one, "right");
     builder.CreateBr(cycle);
     
     builder.SetInsertPoint(ret);
-    builder.CreateCall(function2, res);
+    //builder.CreateCall(print, res);
     builder.CreateRetVoid();
     
     

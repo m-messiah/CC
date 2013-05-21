@@ -1,5 +1,5 @@
 #include <iostream>
-#include "Driver.hpp"
+#include "driver.hpp"
 
 Driver::Driver() :
     trace_scanning(false),
